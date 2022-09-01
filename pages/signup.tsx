@@ -49,7 +49,7 @@ const signup: NextPage = (props: Props) => {
 
     const resUser = get(res, "data");
     if (resUser && get(resUser, 'username').length > 0) {
-      alert(JSON.stringify(resUser));
+      // alert(JSON.stringify(resUser));
       setCurrentUser(resUser);
       localStorage.setItem("user", JSON.stringify(resUser));
       router.push("/");

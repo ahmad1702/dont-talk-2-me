@@ -40,6 +40,4 @@ export default function handler(
   } else {
     res.status(400).json({ message: "Only Post is Accepted" });
   }
-
-  //   res.status(200).json({ name: "John Doe" });
 }

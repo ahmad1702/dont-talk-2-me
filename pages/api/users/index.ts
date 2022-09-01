@@ -2,36 +2,6 @@
 import { add, get } from "lodash-es";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { UserAuth } from "../../../Auth/UserProvider";
-const fs = require("fs");
-const usersPath = "Auth/users.json";
-
-type addUserToJsonReturnType = "success" | "username exists" | "error";
-
-const addUserToJson = (inputUser: UserAuth): addUserToJsonReturnType => {
-  let message: addUserToJsonReturnType | null = null;
-  try {
-    const data = JSON.parse(fs.readFileSync(usersPath));
-    if (
-      data.filter((item: UserAuth) => item.username === inputUser.username)
-        .length > 0
-    ) {
-      message = "username exists";
-    } else {
-      message = "success";
-      data.push(inputUser);
-      fs.writeFile(usersPath, JSON.stringify(data), (err: any, result: any) => {
-        if (err) {
-          console.error(err);
-          message = "error";
-        }
-      });
-    }
-  } catch (error) {
-    message = "error";
-  }
-  console.log({ message: message });
-  return message || "error";
-};
 
 export default async function handler(
   req: NextApiRequest,
@@ -42,8 +12,7 @@ export default async function handler(
   if (req.method === "GET") {
     if (secret) {
       if (secret === "Bearer alligator") {
-        let rawdata = fs.readFileSync(usersPath);
-        let users = JSON.parse(rawdata);
+        const users = await prisma.user.findMany();
         res.status(200).json(users);
       } else {
         res.status(401).json({
@@ -66,15 +35,16 @@ export default async function handler(
       };
       if (username && password && username.length > 0 && password.length > 0) {
         try {
-          const addAction = await addUserToJson(inputUser);
-          if (addAction) {
-            if (addAction === "success") {
-              res.status(200).json(inputUser);
-            } else if (addAction === "username exists") {
-              res.status(400).json({ message: "Username already exists" });
-            } else if (addAction === "error") {
-              res.status(500).json({ message: "Something went wrong" });
-            }
+          const user = await prisma.user.create({
+            data: {
+              username: inputUser.username,
+              password: inputUser.password,
+            },
+          });
+          if (user) {
+            res.status(200).json(user);
+          } else {
+            res.status(400).json({ message: "no user found" });
           }
         } catch (error) {
           res.status(500).json({ message: error });

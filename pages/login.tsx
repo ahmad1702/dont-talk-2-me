@@ -72,6 +72,7 @@ const login: NextPage = (props: Props) => {
             >
                 <video autoPlay muted loop id="myVideo" className='w-full h-full object-cover'>
                     <source src={VIDEO_SRC} type="video/mp4" className='object-cover' />
+                    Browser not supported
                 </video>
             </div>
             <div className='md:h-screen w-full md:w-1/2 flex flex-col justify-center items-center px-10'>

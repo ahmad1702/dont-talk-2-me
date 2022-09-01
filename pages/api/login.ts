@@ -2,10 +2,9 @@
 import { get } from "lodash-es";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { UserAuth } from "../../Auth/UserProvider";
-const fs = require("fs");
-const usersPath = "Auth/users.json";
+import prisma from "../../lib/prisma";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
@@ -14,37 +13,31 @@ export default function handler(
       .status(400)
       .json({ message: "Wrong request method, only Post is allowed" });
   }
-  const data = JSON.parse(fs.readFileSync(usersPath));
-  if (data) {
-    const body = req.body;
-    if (body) {
-      const inputUser: UserAuth = {
-        username: get(body, "username"),
-        password: get(body, "password"),
-      };
+  const body = req.body;
+  if (body) {
+    const inputUser: UserAuth = {
+      username: get(body, "username"),
+      password: get(body, "password"),
+    };
 
-      const matchedByUsername = data.filter(
-        (item: UserAuth) => item.username == inputUser.username
-      );
-      if (
-        matchedByUsername.length > 0 &&
-        inputUser.password === matchedByUsername[0].password
-      ) {
-        res.status(200).json({
-          message: "Logged in successfully!",
-          user: inputUser,
-        });
-      } else {
-        res.status(400).json({
-          message: "Username or Password is invalid. Please Try Again",
-          userProvided: inputUser,
-          data: data,
-        });
-      }
+    const user = await prisma.user.findFirst({
+      where: {
+        username: inputUser.username,
+        password: inputUser.password,
+      },
+    });
+    if (user) {
+      res.status(200).json({
+        message: "Logged in successfully!",
+        user: inputUser,
+      });
     } else {
-      res.status(400).json({ message: "No body was passed" });
+      res.status(400).json({
+        message: "Username or Password is invalid. Please Try Again",
+        userProvided: inputUser,
+      });
     }
   } else {
-    res.status(500).json({ message: "Json not found" });
+    res.status(400).json({ message: "No body was passed" });
   }
 }
