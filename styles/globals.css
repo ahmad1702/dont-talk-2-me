@@ -1,3 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* nav {
+  width: 100vw !important;
+  min-height: 76px;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+*/
+nav .nextui-navbar-container {
+  width: 100% !important;
+  max-width: none;
+} 

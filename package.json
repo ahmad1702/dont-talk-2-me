@@ -6,9 +6,21 @@
     "start": "next start"
   },
   "dependencies": {
+    "@heroicons/react": "^2.0.10",
+    "@nextui-org/react": "^1.0.0-beta.10",
+    "@types/js-cookie": "^3.0.2",
+    "@types/lodash-es": "^4.17.6",
+    "axios": "^0.27.2",
+    "js-cookie": "^3.0.1",
+    "lodash-es": "^4.17.21",
     "next": "latest",
+    "next-themes": "^0.2.0",
+    "pusher": "^5.1.1-beta",
+    "pusher-js": "^7.4.0",
     "react": "18.1.0",
-    "react-dom": "18.1.0"
+    "react-device-detect": "^2.2.2",
+    "react-dom": "18.1.0",
+    "use-local-storage-state": "^18.1.1"
   },
   "devDependencies": {
     "@types/node": "17.0.35",
