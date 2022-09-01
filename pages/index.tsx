@@ -49,7 +49,7 @@ const rooms: RoomType[] = [
 ]
 
 const Home: NextPage = () => {
-  const { currentUser } = useContext(UserContext);
+  const { currentUser, setCurrentUser } = useContext(UserContext);
   const router = useRouter();
   const [apiCalls, setApiCalls] = useState<number>(0);
   const { isDark } = useTheme();
@@ -61,6 +61,7 @@ const Home: NextPage = () => {
   const [currMessage, setCurrMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [message, setMessage] = useState<Message | null>(null);
+  const [customUsername, setCustomUsername] = useState('');
 
   useEffect(() => {
     if (message && !messages.includes(message)) {
@@ -113,10 +114,10 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
-    if (!currentUser) {
-      router.push('/login')
-      return;
-    };
+    // if (!currentUser) {
+    //   router.push('/login')
+    //   return;
+    // };
     Pusher.logToConsole = true;
     const APP_KEY = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
     if (APP_KEY && APP_KEY.length > 0) {
@@ -170,6 +171,13 @@ const Home: NextPage = () => {
     setMessages([])
   }, [currSelectedRoom])
 
+  const handleCustomUserSet = () => {
+    setCurrentUser({
+      username: customUsername,
+      password: '1234'
+    })
+  }
+
   return (
     <div className="h-screen w-full max-w-none" style={isDark
       ? { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
@@ -181,65 +189,81 @@ const Home: NextPage = () => {
       </Head>
       <CustomNav />
 
-      <main className="p-10" style={{ height: 'calc(100vh - 76px)', }}>
+      {currentUser ? (
+        <main className="p-10" style={{ height: 'calc(100vh - 76px)', }}>
 
-        <div className='w-full flex items-center justify-center mb-5'>
-          <div className='flex items-center justify-center bg-white/20 dark:bg-black/30 backdrop-blur-lg p-3 px-5 rounded-2xl'>
-            <div className='text-2xl font-extrabold mr-3 mb-1 text-white '>{apiCalls} Current Room:</div>
-            <Dropdown>
-              <Dropdown.Button bordered color='warning' className='text-white border-white '>{currSelectedRoom}</Dropdown.Button>
-              <Dropdown.Menu
-                color="warning"
-                aria-label="Select Room"
-                selectionMode="single"
-                selectedKeys={new Set([currSelectedRoom])}
-                onSelectionChange={handleSelectRoomChange}
-              >
-                {rooms.map((room: RoomType) => {
-                  return (
-                    <Dropdown.Item key={room}>{room}</Dropdown.Item>
-                  )
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
+          <div className='w-full flex items-center justify-center mb-5'>
+            <div className='flex items-center justify-center bg-white/20 dark:bg-black/30 backdrop-blur-lg p-3 px-5 rounded-2xl'>
+              <div className='text-2xl font-extrabold mr-3 mb-1 text-white '>{apiCalls} Current Room:</div>
+              <Dropdown>
+                <Dropdown.Button bordered color='warning' className='text-white border-white '>{currSelectedRoom}</Dropdown.Button>
+                <Dropdown.Menu
+                  color="warning"
+                  aria-label="Select Room"
+                  selectionMode="single"
+                  selectedKeys={new Set([currSelectedRoom])}
+                  onSelectionChange={handleSelectRoomChange}
+                >
+                  {rooms.map((room: RoomType) => {
+                    return (
+                      <Dropdown.Item key={room}>{room}</Dropdown.Item>
+                    )
+                  })}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
-        </div>
-        <div className='p-5 bg-white/50 dark:bg-neutral-700/50 rounded-2xl' style={{ height: '70vh' }}>
-          <div className='overflow-auto' style={{ height: 'calc(70vh - 6rem)', overflow: 'auto' }}>
-            {messages.map((currMessage: Message, i: number) => {
-              return (
-                <div key={i} className={'w-full flex items-center mt-1 ' + (currMessage.username === currentUser?.username ? 'justify-end' : 'justify-start')} >
-                  <div className={'m-w-1/3 py-3 px-5 text-white' + ' ' + (currMessage.username === currentUser?.username ? outgoingMsgStyle : incomingMsgStyle)}>
-                    <div className='text-sm'>{currMessage.username}</div>
-                    <div className='font-bold'>{currMessage.message}</div>
-                    {/* <div className='text-xs'>{formatAMPM(currMessage.time as Date)}</div> */}
+          <div className='p-5 bg-white/50 dark:bg-neutral-700/50 rounded-2xl' style={{ height: '70vh' }}>
+            <div className='overflow-auto' style={{ height: 'calc(70vh - 6rem)', overflow: 'auto' }}>
+              {messages.map((currMessage: Message, i: number) => {
+                return (
+                  <div key={i} className={'w-full flex items-center mt-1 ' + (currMessage.username === currentUser?.username ? 'justify-end' : 'justify-start')} >
+                    <div className={'m-w-1/3 py-3 px-5 text-white' + ' ' + (currMessage.username === currentUser?.username ? outgoingMsgStyle : incomingMsgStyle)}>
+                      <div className='text-sm'>{currMessage.username}</div>
+                      <div className='font-bold'>{currMessage.message}</div>
+                      {/* <div className='text-xs'>{formatAMPM(currMessage.time as Date)}</div> */}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-            <div ref={bottomRef} />
+                )
+              })}
+              <div ref={bottomRef} />
+            </div>
+            <form onSubmit={handleSubmit} className='h-24 mt-3'>
+              <Input
+                aria-label='Message'
+                clearable
+                fullWidth
+                contentRightStyling={false}
+                placeholder="Type your message..."
+                contentRight={
+                  <div onClick={(e: any) => submitPusherMessage(e)}>
+                    <SendButton>
+                      <SendIcon fill={'white'} filled={undefined} size={undefined} height={undefined} width={undefined} label={undefined} className={undefined} />
+                    </SendButton>
+                  </div>
+                }
+                value={currMessage}
+                onChange={(e) => setCurrMessage(e.target.value)}
+              />
+            </form>
           </div>
-          <form onSubmit={handleSubmit} className='h-24 mt-3'>
+
+        </main>
+      ) : (
+        <div className="p-10 flex items-center justify-center" style={{ height: 'calc(100vh - 76px)', }}>
+          <form onSubmit={handleCustomUserSet} className='h-24 mt-3'>
             <Input
-              aria-label='Message'
+              aria-label='Custom Username'
               clearable
               fullWidth
               contentRightStyling={false}
-              placeholder="Type your message..."
-              contentRight={
-                <div onClick={(e: any) => submitPusherMessage(e)}>
-                  <SendButton>
-                    <SendIcon fill={'white'} filled={undefined} size={undefined} height={undefined} width={undefined} label={undefined} className={undefined} />
-                  </SendButton>
-                </div>
-              }
-              value={currMessage}
-              onChange={(e) => setCurrMessage(e.target.value)}
+              placeholder="Type your Username..."
+              value={customUsername}
+              onChange={(e) => setCustomUsername(e.target.value)}
             />
           </form>
         </div>
-
-      </main>
+      )}
     </div>
   )
 }

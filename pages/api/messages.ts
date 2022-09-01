@@ -28,7 +28,10 @@ export default function handler(
             pusher.trigger(room ? room : "my-channel", "my-event", body);
             res.status(200).json({ success: "success" });
           } catch (error) {
-            res.status(500).json({ error: error });
+            res.status(500).json({
+              error: error,
+              message: "prisma be wack asl",
+            });
           }
         } else {
           res.status(500).json({ message: "Env not working" });
