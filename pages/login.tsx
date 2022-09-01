@@ -34,7 +34,6 @@ const login: NextPage = (props: Props) => {
 
     const router = useRouter();
 
-
     const handleLogin = async (e: any) => {
         if (e) {
             e.preventDefault()
@@ -80,8 +79,9 @@ const login: NextPage = (props: Props) => {
                     <Grid.Container gap={3}>
                         <Grid xs={12}>
                             <div>
-                                <div className='text-3xl font-extrabold'>Welcome | Login</div>
-                                <div className='text-md font-medium'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Fugiat quam doloribus nihil nobis facilis, perferendis id et repellendus aspernatur excepturi eligendi optio modi sint laboriosam.</div>
+                                <div className='text-4xl font-extrabold'>
+                                    ✌️ DontTalk2Me <span className='font-normal'>| Login</span>
+                                </div>
                             </div>
                         </Grid>
                         {

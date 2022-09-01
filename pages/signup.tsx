@@ -67,9 +67,9 @@ const signup: NextPage = (props: Props) => {
     }
   };
   return (
-    <div className="w-full h-full md:h-screen flex">
+    <div className="w-full h-full md:h-screen md:flex">
       <div
-        className="h-64 md:h-screen w-full md:w-1/2 bg-red-800"
+        className="h-96 md:h-screen w-full md:w-1/2 bg-red-800"
       >
         <video
           autoPlay
@@ -81,12 +81,14 @@ const signup: NextPage = (props: Props) => {
           <source src={VIDEO_SRC} type="video/mp4" className="object-cover" />
         </video>
       </div>
-      <div className="md:h-screen w-full md:w-1/2 flex flex-col justify-center items-center px-10">
+      <div className="md:h-screen w-full md:w-1/2 md:flex flex-col justify-center items-center mt-10 py-30 md:py-0 md:px-10">
         <form onSubmit={(e) => handleSignUp(e)}>
           <Grid.Container gap={3}>
             <Grid xs={12}>
               <div>
-                <div className="text-3xl font-extrabold">Welcome | Sign Up</div>
+                <div className='text-4xl font-extrabold'>
+                  ✌️ DontTalk2Me <span className='font-normal'>| Sign Up</span>
+                </div>
               </div>
             </Grid>
             {errMsg && (

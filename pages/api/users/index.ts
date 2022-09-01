@@ -47,7 +47,10 @@ export default async function handler(
             res.status(400).json({ message: "no user found" });
           }
         } catch (error) {
-          res.status(500).json({ message: error });
+          res.status(500).json({
+            message:
+              error ? error : "prisma said some 🤢 ",
+          });
         }
       } else {
         res.status(400).json({
