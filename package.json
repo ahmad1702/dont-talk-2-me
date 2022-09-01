@@ -4,7 +4,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "vercel-build": "prisma generate && prisma migrate dev dev --name TheName && next build",
+    "vercel-build": "prisma generate && prisma migrate dev --name theName && next build",
     "prisma:generate": "prisma generate"
   },
   "dependencies": {
