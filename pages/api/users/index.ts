@@ -2,6 +2,7 @@
 import { add, get } from "lodash-es";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { UserAuth } from "../../../Auth/UserProvider";
+import prisma from "../../../lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
@@ -48,9 +49,9 @@ export default async function handler(
           }
         } catch (error) {
           res.status(500).json({
-            message:
-              error ? error : "prisma said some 🤢 ",
+            message: error ? error : "prisma said some 🤢 ",
           });
+          console.error(error);
         }
       } else {
         res.status(400).json({

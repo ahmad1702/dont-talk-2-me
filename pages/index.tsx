@@ -4,6 +4,7 @@ import { get } from 'lodash-es';
 import type { NextPage } from 'next';
 import { useTheme as useNextTheme } from 'next-themes';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import Pusher from 'pusher-js';
 import { useContext, useEffect, useRef, useState } from 'react';
 import useLocalStorageState from 'use-local-storage-state';
@@ -48,9 +49,10 @@ const rooms: RoomType[] = [
 ]
 
 const Home: NextPage = () => {
+  const { currentUser } = useContext(UserContext);
+  const router = useRouter();
   const [apiCalls, setApiCalls] = useState<number>(0);
   const { isDark } = useTheme();
-  const { currentUser } = useContext(UserContext);
 
   const [currSelectedRoom, setCurrSelectedRoom] = useLocalStorageState<RoomType>('room', {
     defaultValue: 'Object Oriented',
@@ -111,6 +113,10 @@ const Home: NextPage = () => {
   }
 
   useEffect(() => {
+    if (!currentUser) {
+      router.push('/login')
+      return;
+    };
     Pusher.logToConsole = true;
     const APP_KEY = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
     if (APP_KEY && APP_KEY.length > 0) {
