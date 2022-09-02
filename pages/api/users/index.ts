@@ -8,23 +8,9 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<any>
 ) {
-  const secret = req.headers.authorization;
-
   if (req.method === "GET") {
-    if (secret) {
-      if (secret === "Bearer alligator") {
-        const users = await prisma.user.findMany();
-        res.status(200).json(users);
-      } else {
-        res.status(401).json({
-          message: "Wrong Auth Creds, try again :(",
-        });
-      }
-    } else {
-      res.status(401).json({
-        message: "No Auth Credentials were Provided",
-      });
-    }
+    const users = await prisma.user.findMany();
+    res.status(200).json(users);
   } else if (req.method === "POST") {
     const body = req.body;
     if (body) {

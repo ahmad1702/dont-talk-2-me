@@ -46,6 +46,7 @@ const signup: NextPage = (props: Props) => {
       username: username,
       password: password,
     });
+    console.log('res:', res)
 
     const resUser = get(res, "data");
     if (resUser && get(resUser, 'username').length > 0) {
