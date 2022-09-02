@@ -57,7 +57,7 @@ const Home: NextPage = () => {
   const [currMessage, setCurrMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [customUsername, setCustomUsername] = useState('');
-  const allMessages: Message[] = []
+  let allMessages: Message[] = []
 
   const updateMessages = (input: Message) => {
     setMessages([
@@ -66,7 +66,9 @@ const Home: NextPage = () => {
     ])
   }
 
+
   useEffect(() => {
+    const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
     fetch(`${window.location.origin}/api/socket`).finally(() => {
       const socket = io({
         query: {
@@ -89,11 +91,13 @@ const Home: NextPage = () => {
         console.log('a user connected')
       })
 
+      socket.on("chatMessage", addMessage)
+
       socket.on(currSelectedRoom, data => {
         console.log("Room:", data)
         const { username, message, room } = JSON.parse(data)
         if (username && message && room && typeof username === 'string' && typeof message === 'string' && typeof room === 'string') {
-          allMessages.push(
+          addMessage(
             {
               username: username,
               text: message,
@@ -102,10 +106,6 @@ const Home: NextPage = () => {
               createdAt: new Date(Date.now())
             }
           )
-          setMessages([
-            ...messages,
-            ...allMessages
-          ])
         }
       })
 
@@ -113,7 +113,15 @@ const Home: NextPage = () => {
         console.log('disconnect')
       })
     })
+
+    return () => {
+      // turning of socket listner on unmount
+      socket.off('chatMessage', addMessage);
+    }
+
+
   }, [currSelectedRoom])
+
 
 
 
