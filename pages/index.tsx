@@ -12,7 +12,7 @@ import { UserContext } from '../Auth/UserProvider';
 import CustomNav from '../components/CustomNav';
 import { SendButton } from '../components/icons/SendButton';
 import { SendIcon } from '../components/icons/SendIcon';
-import io from 'Socket.IO-client'
+import io from 'socket.io-client'
 
 const incomingMsgStyle = 'bg-neutral-400 dark:bg-neutral-600 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 const outgoingMsgStyle = 'bg-blue-400 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl';
