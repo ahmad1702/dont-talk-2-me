@@ -12,9 +12,7 @@ import { UserContext } from '../Auth/UserProvider';
 import CustomNav from '../components/CustomNav';
 import { SendButton } from '../components/icons/SendButton';
 import { SendIcon } from '../components/icons/SendIcon';
-import io, { Socket } from 'Socket.IO-client'
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
+import io from 'Socket.IO-client'
 
 const incomingMsgStyle = 'bg-neutral-400 dark:bg-neutral-600 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 const outgoingMsgStyle = 'bg-blue-400 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl';
@@ -113,11 +111,6 @@ const Home: NextPage = () => {
         console.log('disconnect')
       })
     })
-
-    return () => {
-      // turning of socket listner on unmount
-      socket.off('chatMessage', addMessage);
-    }
 
 
   }, [currSelectedRoom])
