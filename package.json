@@ -14,6 +14,7 @@
     "@types/js-cookie": "^3.0.2",
     "@types/lodash-es": "^4.17.6",
     "@types/socket.io": "^3.0.2",
+    "@types/socket.io-client": "^3.0.0",
     "axios": "^0.27.2",
     "js-cookie": "^3.0.1",
     "lodash-es": "^4.17.21",
