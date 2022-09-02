@@ -54,7 +54,6 @@ const Home: NextPage = () => {
 
   const [currMessage, setCurrMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
-  const [customUsername, setCustomUsername] = useState('');
   let allMessages: Message[] = []
 
   const updateMessages = (input: Message) => {
@@ -187,13 +186,6 @@ const Home: NextPage = () => {
     })
   }
 
-  const handleCustomUserSet = () => {
-    setCurrentUser({
-      username: customUsername,
-      password: '1234'
-    })
-  }
-
   return (
     <div className="h-screen w-full max-w-none" style={isDark
       ? { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
@@ -268,17 +260,7 @@ const Home: NextPage = () => {
         </main>
       ) : (
         <div className="p-10 flex items-center justify-center" style={{ height: 'calc(100vh - 76px)', }}>
-          <form onSubmit={handleCustomUserSet} className='h-24 mt-3'>
-            <Input
-              aria-label='Custom Username'
-              clearable
-              fullWidth
-              contentRightStyling={false}
-              placeholder="Type your Username..."
-              value={customUsername}
-              onChange={(e) => setCustomUsername(e.target.value)}
-            />
-          </form>
+          <div className='text-white font-extrabold'>Please Sign In</div>
         </div>
       )}
     </div>

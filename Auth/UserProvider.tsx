@@ -41,10 +41,9 @@ export const UserProvider = ({ children }: UserProviderProps) => {
             const parsedStorageUser: UserAuth | null = storageUser ? JSON.parse(storageUser) : null;
             if (parsedStorageUser && parsedStorageUser.username) {
                 setCurrentUser(parsedStorageUser)
+            } else {
+                router.push('login')
             }
-            // } else {
-            //     router.push('login')
-            // }
         }
         console.log('usercontext', currentUser);
     }, []);
