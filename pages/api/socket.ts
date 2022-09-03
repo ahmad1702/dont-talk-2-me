@@ -47,6 +47,8 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponse<any>) => {
               name: inputMessage.room,
             },
           });
+          if (!user) console.log("user doesn't exist");
+          if (!dbRoom) console.log("no room found");
           if (user && dbRoom && typeof inputMessage.room === "string") {
             const message = await prisma.message.create({
               data: {
@@ -57,6 +59,8 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponse<any>) => {
             });
             if (message) {
               io.emit(inputMessage.room, JSON.stringify(inputMessage));
+            } else {
+              console.log("Message create failed");
             }
           }
         }
