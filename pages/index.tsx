@@ -161,49 +161,48 @@ const Home: NextPage = () => {
     setCurrSelectedRoom(e.currentKey);
   }
 
-  // const submitSocketMessageDeprecated = async (e?: any) => {
-  //   console.log('submit socket messgae')
-  //   if (!(currentUser && currSelectedRoom)) return;
-  //   fetch(`${window.location.origin}/api/socket`).finally(() => {
-  //     const socket = io()
-
-  //     socket.on('connect', () => {
-  //       console.log('we in the submit socket')
-  //       socket.emit('newMessage', JSON.stringify({
-  //         username: currentUser.username,
-  //         message: currMessage,
-  //         room: currSelectedRoom
-  //       }))
-  //     })
-
-
-  //     socket.on('newMessage', data => {
-  //       socket.disconnect()
-  //     })
-
-  //     socket.on('disconnect', () => {
-  //       console.log('disconnect')
-  //     })
-  //   })
-  // }
-
   const submitSocketMessage = async (e?: any) => {
+    console.log('submit socket messgae')
+    if (!(currentUser && currSelectedRoom)) return;
+    fetch(`${window.location.origin}/api/socket`).finally(() => {
+      const socket = io()
 
-    if (e) {
-      e.preventDefault();
-    }
-    if (!currentUser) return;
+      socket.on('connect', () => {
+        console.log('we in the submit socket')
+        socket.emit('newMessage', JSON.stringify({
+          username: currentUser.username,
+          message: currMessage,
+          room: currSelectedRoom
+        }))
+        setCurrMessage('')
+      })
 
-    const channelNameFromRoom = currSelectedRoom.replace(' ', '').toLowerCase();
-    const res = await axios.post(`${window.location.origin}/api/messages?room=${channelNameFromRoom}`, {
-      username: currentUser.username,
-      message: currMessage,
-      time: new Date(Date.now())
+
+      socket.on('newMessage', data => {
+        socket.disconnect()
+      })
+
+      socket.on('disconnect', () => {
+        console.log('disconnect')
+      })
     })
-    console.log('res:', res)
-    setCurrMessage('');
-
   }
+
+  // const submitSocketMessage = async (e?: any) => {
+
+  //   if (e) {
+  //     e.preventDefault();
+  //   }
+  //   if (!currentUser) return;
+  //   const res = await axios.post(`${window.location.origin}/api/messages?room=${currSelectedRoom.split(' ').join('%20')}`, {
+  //     username: currentUser.username,
+  //     message: currMessage,
+  //     time: new Date(Date.now())
+  //   })
+  //   console.log('res:', res)
+  //   setCurrMessage('');
+
+  // }
 
   return (
     <div className="h-screen w-full max-w-none" style={isDark
