@@ -4,21 +4,30 @@ import { Server } from "socket.io";
 
 const ioHandler = (req: NextApiRequest, res: NextApiResponse<any>) => {
   if (!(res.socket as any).server.io) {
+    // if (true) {
     console.log("*First use, starting socket.io");
 
     const io = new Server((res.socket as any).server);
 
     io.on("connection", async (socket) => {
-      const query = socket.handshake.query;
-      const roomName = query.roomName;
-      if (!roomName) {
+      const roomquery = socket.handshake.query.room as string;
+      if (!roomquery) {
         // Handle this as required
         console.log("No Room name was supplied");
+        return;
       }
-      socket.join(roomName as string);
-      socket.broadcast
-        .to(roomName as string)
-        .emit(`${roomName}: Someone just joined`);
+      const roomName = roomquery.replace("%20", " ");
+      // socket.join(roomName);
+      // socket.to(roomName).emit("connectToRoom", "You are in room: " + roomName);
+      // .in(roomName)
+      // console.log({ roomName });
+      // socket.join(roomName as string);
+      // socket.emit("notif", `${roomName} connected`);
+
+      socket.on(roomName, (msg) => {
+        console.log(`New user connected to ${roomName}`);
+        socket.broadcast.emit(roomName, `no ${msg} room for u boi!`);
+      });
 
       socket.on("hello", (msg) => {
         console.log({ msg: msg });
@@ -58,7 +67,10 @@ const ioHandler = (req: NextApiRequest, res: NextApiResponse<any>) => {
               },
             });
             if (message) {
-              io.emit(inputMessage.room, JSON.stringify(inputMessage));
+              io.to(dbRoom.name).emit(
+                inputMessage.room,
+                JSON.stringify(inputMessage)
+              );
             } else {
               console.log("Message create failed");
             }

@@ -64,58 +64,105 @@ const Home: NextPage = () => {
   }
 
 
+  // useEffect(() => {
+  //   if (!currSelectedRoom) return;
+  //   const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
+  //   fetch(`${window.location.origin}/api/socket`).finally(() => {
+  //     const socket = io({
+  //       query: {
+  //         room: currSelectedRoom.split(' ').join('%20'),
+  //       },
+  //     })
+
+  //     socket.on('connect', () => {
+  //       socket.emit('hello', 'waterrr')
+  //       // socket.emit(currSelectedRoom)
+  //       socket.emit('join', currSelectedRoom);
+  //       console.log('Connected')
+  //     })
+
+
+  //     socket.on('hello', data => {
+  //       console.log('hello', data)
+  //     })
+
+  //     socket.on('a user connected', () => {
+  //       console.log('a user connected')
+  //     })
+  //     socket.on('connectToRoom', data => {
+  //       alert(data)
+  //     })
+
+  //     socket.on('notif', data => console.log(data))
+
+  //     socket.on(currSelectedRoom, data => {
+  //       console.log("Room:", data)
+  //       const { username, message, room } = JSON.parse(data)
+  //       if (username && message && room && typeof username === 'string' && typeof message === 'string' && typeof room === 'string') {
+  //         addMessage(
+  //           {
+  //             username: username,
+  //             text: message,
+  //             id: Math.random() * 1000,
+  //             roomName: currSelectedRoom,
+  //             createdAt: new Date(Date.now())
+  //           }
+  //         )
+  //       }
+  //     })
+
+  //     socket.on('disconnect', () => {
+  //       console.log('disconnect')
+  //     })
+  //   })
+
+
+  // }, [currSelectedRoom])
+
   useEffect(() => {
-    if (!currSelectedRoom) return;
+    // Enable pusher logging - don't include this in production
     const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
-    fetch(`${window.location.origin}/api/socket?roomName=${currSelectedRoom}`).finally(() => {
-      const socket = io({
-        query: {
-          roomName: currSelectedRoom,
-        },
-      })
+    Pusher.logToConsole = true;
+    const PUBLIC_KEY = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
+    if (!PUBLIC_KEY) {
+      console.log('no public key found')
+      return;
+    }
+    const pusher = new Pusher(PUBLIC_KEY, {
+      cluster: 'us2'
+    });
 
-      socket.on('connect', () => {
-        socket.emit('hello', 'waterrr')
-        // socket.emit(currSelectedRoom)
-        socket.emit('join', currSelectedRoom);
-      })
+    const channel = pusher.subscribe('chat');
+    channel.bind("chat-event", function (data: any) {
+      const parsedData: Message = data as Message;
+      if (parsedData) {
+        addMessage(parsedData);
+      }
+    });
 
+    return () => {
+      pusher.unsubscribe('chat')
+    }
+  }, [])
 
-      socket.on('hello', data => {
-        console.log('hello', data)
-      })
+  // useEffect(() => {
+  //   const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY, {
+  //     cluster: "eu",
+  //   });
 
-      socket.on('a user connected', () => {
-        console.log('a user connected')
-      })
+  //   const channel = pusher.subscribe("chat");
 
-      socket.on("chatMessage", addMessage)
+  //   channel.bind("chat-event", function (data) {
+  //     setChats((prevState) => [
+  //       ...prevState,
+  //       { sender: data.sender, message: data.message },
+  //     ]);
+  //   });
 
-      socket.on(currSelectedRoom, data => {
-        console.log("Room:", data)
-        const { username, message, room } = JSON.parse(data)
-        if (username && message && room && typeof username === 'string' && typeof message === 'string' && typeof room === 'string') {
-          addMessage(
-            {
-              username: username,
-              text: message,
-              id: Math.random() * 1000,
-              roomName: currSelectedRoom,
-              createdAt: new Date(Date.now())
-            }
-          )
-        }
-      })
-
-      socket.on('disconnect', () => {
-        console.log('disconnect')
-      })
-    })
-
-
-  }, [currSelectedRoom])
-
-
+  //   return () => {
+  //     pusher.unsubscribe("chat");
+  //   };
+  // }, []);
 
 
   useEffect(() => {
@@ -162,31 +209,43 @@ const Home: NextPage = () => {
   }
 
   const submitSocketMessage = async (e?: any) => {
-    console.log('submit socket messgae')
-    if (!(currentUser && currSelectedRoom)) return;
-    fetch(`${window.location.origin}/api/socket`).finally(() => {
-      const socket = io()
-
-      socket.on('connect', () => {
-        console.log('we in the submit socket')
-        socket.emit('newMessage', JSON.stringify({
-          username: currentUser.username,
-          message: currMessage,
-          room: currSelectedRoom
-        }))
-        setCurrMessage('')
+    if (currentUser && currMessage.length > 0) {
+      const res = await axios.post(`${window.location.origin}/api/pusher`, {
+        username: currentUser.username,
+        message: currMessage,
+        room: currSelectedRoom
       })
 
-
-      socket.on('newMessage', data => {
-        socket.disconnect()
-      })
-
-      socket.on('disconnect', () => {
-        console.log('disconnect')
-      })
-    })
+      console.log(res)
+    }
   }
+
+  // const submitSocketMessage = async (e?: any) => {
+  //   console.log('submit socket messgae')
+  //   if (!(currentUser && currSelectedRoom)) return;
+  //   fetch(`${window.location.origin}/api/socket`).finally(() => {
+  //     const socket = io()
+
+  //     socket.on('connect', () => {
+  //       console.log('we in the submit socket')
+  //       socket.emit('newMessage', JSON.stringify({
+  //         username: currentUser.username,
+  //         message: currMessage,
+  //         room: currSelectedRoom
+  //       }))
+  //       setCurrMessage('')
+  //     })
+
+
+  //     socket.on('newMessage', data => {
+  //       socket.disconnect()
+  //     })
+
+  //     socket.on('disconnect', () => {
+  //       console.log('disconnect')
+  //     })
+  //   })
+  // }
 
   // const submitSocketMessage = async (e?: any) => {
 
@@ -205,7 +264,7 @@ const Home: NextPage = () => {
   // }
 
   return (
-    <div className="h-screen w-full max-w-none" style={isDark
+    <div className="h-screen w-full max-w-none overflow-hidden" style={isDark
       ? { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
       : { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
     }>
