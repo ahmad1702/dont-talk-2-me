@@ -67,7 +67,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (!currSelectedRoom) return;
     const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
-    fetch(`${window.location.origin}/api/socket`).finally(() => {
+    fetch(`${window.location.origin}/api/socket?roomName=${currSelectedRoom}`).finally(() => {
       const socket = io({
         query: {
           roomName: currSelectedRoom,
