@@ -64,17 +64,23 @@ const login: NextPage = (props: Props) => {
         }
     }
     return (
-        <div className='w-full h-full md:h-screen flex'>
+        <div className='w-full h-full md:h-screen md:flex'>
             <div
-                className='h-64 md:h-screen w-full md:w-1/2 bg-red-800'
+                className='h-96 md:h-screen w-full md:w-1/2 bg-red-800'
             // style={{ background: `url("${BG_PIC}")`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
-                <video autoPlay muted loop id="myVideo" className='w-full h-full object-cover'>
+                <video
+                    autoPlay
+                    muted
+                    loop
+                    id="myVideo"
+                    className='w-full h-full object-cover'
+                >
                     <source src={VIDEO_SRC} type="video/mp4" className='object-cover' />
                     Browser not supported
                 </video>
             </div>
-            <div className='md:h-screen w-full md:w-1/2 flex flex-col justify-center items-center px-10'>
+            <div className='md:h-screen w-full md:w-1/2 md:flex flex-col justify-center items-center mt-10 py-30 md:py-0 md:px-10'>
                 <form onSubmit={(e) => handleLogin(e)}>
                     <Grid.Container gap={3}>
                         <Grid xs={12}>

@@ -272,9 +272,9 @@ const Home: NextPage = () => {
   // }
 
   return (
-    <div className="h-screen w-full max-w-none overflow-hidden" style={isDark
-      ? { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
-      : { background: `url("${BG_PIC_DARK}")`, backgroundPosition: 'top', backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
+    <div className="md:h-screen w-full max-w-none md:overflow-hidden" style={isDark
+      ? { background: `url("${BG_PIC_DARK}")`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
+      : { background: `url("${BG_PIC_DARK}")`, backgroundSize: 'cover', backgroundRepeat: 'no-repeat' }
     }>
       <Head>
         <title>✌️ DontTalk2Me</title>
@@ -284,7 +284,7 @@ const Home: NextPage = () => {
       <CustomNav />
 
       {currentUser ? (
-        <main className="p-10" style={{ height: 'calc(100vh - 76px)', }}>
+        <main className="py-10 px-3 md:px-10 h-full md:h-[calc(100vh-76px)]" >
 
           <div className='w-full flex items-center justify-center mb-5'>
             <div className='flex items-center justify-center bg-white/20 dark:bg-black/30 backdrop-blur-lg p-3 px-5 rounded-2xl'>
