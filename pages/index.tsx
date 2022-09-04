@@ -13,6 +13,7 @@ import CustomNav from '../components/CustomNav';
 import { SendButton } from '../components/icons/SendButton';
 import { SendIcon } from '../components/icons/SendIcon';
 import io from 'socket.io-client'
+import { XMarkIcon } from '@heroicons/react/24/solid';
 
 const incomingMsgStyle = 'bg-neutral-400 dark:bg-neutral-600 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 const outgoingMsgStyle = 'bg-blue-400 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl';
@@ -219,6 +220,13 @@ const Home: NextPage = () => {
       console.log(res)
     }
   }
+  const deleteMessage = async (id: number) => {
+    const res = await axios.delete(`${window.location.origin}/api/messages?id=${id}`)
+    console.log(res)
+    if (res.status === 200) {
+      setMessages(currmessages => currmessages.filter(item => item.id !== id))
+    }
+  }
 
   // const submitSocketMessage = async (e?: any) => {
   //   console.log('submit socket messgae')
@@ -301,13 +309,19 @@ const Home: NextPage = () => {
           </div>
           <div className='p-5 bg-white/50 dark:bg-neutral-700/50 rounded-2xl' style={{ height: '70vh' }}>
             <div className='overflow-auto' style={{ height: 'calc(70vh - 6rem)', overflow: 'auto' }}>
-              {messages.map((currMessage: Message, i: number) => {
+              {messages.map((currentMessage: Message, i: number) => {
                 return (
-                  <div key={i} className={'w-full flex items-center mt-1 ' + (currMessage.username === currentUser?.username ? 'justify-end' : 'justify-start')} >
-                    <div className={'m-w-1/3 py-3 px-5 text-white' + ' ' + (currMessage.username === currentUser?.username ? outgoingMsgStyle : incomingMsgStyle)}>
-                      <div className='text-sm'>{currMessage.username}</div>
-                      <div className='font-bold'>{currMessage.text}</div>
-                      <div className='text-xs'>{formatAMPM(new Date(currMessage.createdAt))}</div>
+                  <div key={i} className={'w-full flex items-center mt-1 ' + (currentMessage.username === currentUser?.username ? 'justify-end' : 'justify-start')} >
+                    <div className={'m-w-1/3 py-3 px-5 text-white relative' + ' ' + (currentMessage.username === currentUser?.username ? outgoingMsgStyle : incomingMsgStyle)}>
+                      <div className='text-sm'>{currentMessage.username}</div>
+                      <div className='font-bold'>{currentMessage.text}</div>
+                      <div className='text-xs'>{formatAMPM(new Date(currentMessage.createdAt))}</div>
+                      <div
+                        onClick={(e) => deleteMessage(currentMessage.id)}
+                        className='h-3 w-3 bg-red-600/30 hover:bg-red-600 cursor-pointer duration-300 rounded-full p-0.5 absolute top-2 right-2'
+                      >
+                        <XMarkIcon />
+                      </div>
                     </div>
                   </div>
                 )

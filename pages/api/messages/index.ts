@@ -90,8 +90,28 @@ export default async function handler(
         message: "No Auth Credentials were Provided",
       });
     }
+  } else if (req.method === "DELETE") {
+    const id = parseInt(get(req, "query.id"));
+    if (id) {
+      const deletedMessage = await prisma.message.delete({
+        where: {
+          id: id as number,
+        },
+      });
+      if (deletedMessage) {
+        res.status(200).json(deletedMessage);
+      } else {
+        res.status(500).json({
+          message: "no message found to delete",
+        });
+      }
+    } else {
+      res.status(400).json({
+        message: "no id query supplied",
+      });
+    }
   } else {
-    res.status(400).json({ message: "Only Post and Get is Accepted" });
+    res.status(400).json({ message: "Only Post, Get, and Delete is Accepted" });
   }
 }
 
