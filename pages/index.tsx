@@ -216,6 +216,9 @@ const Home: NextPage = () => {
         message: currMessage,
         room: currSelectedRoom
       })
+      if (res) {
+        setCurrMessage('')
+      }
 
       console.log(res)
     }
