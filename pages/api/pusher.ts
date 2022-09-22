@@ -1,4 +1,3 @@
-// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { get } from "lodash-es";
 import type { NextApiRequest, NextApiResponse } from "next";
 import Pusher from "pusher";
@@ -7,7 +6,6 @@ import prisma from "../../lib/prisma";
 const pusher_app_id = process.env.NEXT_PUBLIC_PUSHER_APP_ID;
 const pusher_app_key = process.env.NEXT_PUBLIC_PUSHER_APP_KEY;
 const pusher_secret = process.env.NEXT_PUBLIC_PUSHER_SECRET;
-// if (pusher_app_id && pusher_app_key && pusher_secret) {
 
 // }
 export const pusher = new Pusher({
@@ -31,13 +29,11 @@ export default async function handler(
         room: get(body, "room"),
       };
       try {
-        // pusher.trigger(room ? room : "my-channel", "my-event", body);
         const user = await prisma.user.findFirst({
           where: {
             username: inputMessage.username,
           },
         });
-        // user ? res.json(user) : res.json({message: 'no user'})
         if (user && typeof inputMessage.room === "string") {
           const dbRoom = await prisma.room.findUnique({
             where: {
@@ -45,7 +41,6 @@ export default async function handler(
             },
           });
           if (dbRoom) {
-            // res.status(200).json({ message: "this works" });
             console.log({
               username: inputMessage.username,
               text: inputMessage.message,

@@ -1,24 +1,20 @@
-import { Button, Navbar, Switch, useTheme, Text, Dropdown, Avatar, Link, Input } from '@nextui-org/react';
+import { XMarkIcon } from '@heroicons/react/24/solid';
+import { Dropdown, Input, useTheme } from '@nextui-org/react';
 import axios from 'axios';
 import { get } from 'lodash-es';
 import type { NextPage } from 'next';
-import { useTheme as useNextTheme } from 'next-themes';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
 import Pusher from 'pusher-js';
 import { useContext, useEffect, useRef, useState } from 'react';
-import useLocalStorageState from 'use-local-storage-state';
 import { UserContext } from '../Auth/UserProvider';
 import CustomNav from '../components/CustomNav';
 import { SendButton } from '../components/icons/SendButton';
 import { SendIcon } from '../components/icons/SendIcon';
-import io from 'socket.io-client'
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import { formatAMPM } from '../utils/utils';
 
 const incomingMsgStyle = 'bg-neutral-400 dark:bg-neutral-600 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl';
 const outgoingMsgStyle = 'bg-blue-400 rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl';
 
-const BG_PIC_LIGHT = "https://images.unsplash.com/photo-1618576980905-8b704806a39b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2815&q=80";
 const BG_PIC_DARK = "https://images.unsplash.com/photo-1557682257-2f9c37a3a5f3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1700&q=80";
 
 export type Message = {
@@ -29,25 +25,8 @@ export type Message = {
   username: string;
 }
 
-
-const formatAMPM = (date: Date) => {
-  if (date) {
-    var hours = date.getHours();
-    let minutes: string | number = date.getMinutes();
-    var ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12; // the hour '0' should be '12'
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    var strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
-  } else {
-    console.error("formatAMPM Error:", date)
-    return '';
-  }
-}
-
 const Home: NextPage = () => {
-  const { currentUser, setCurrentUser } = useContext(UserContext);
+  const { currentUser } = useContext(UserContext);
   const { isDark } = useTheme();
 
   const [rooms, setRooms] = useState([])
@@ -55,75 +34,9 @@ const Home: NextPage = () => {
 
   const [currMessage, setCurrMessage] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
-  let allMessages: Message[] = []
-
-  const updateMessages = (input: Message) => {
-    setMessages([
-      ...messages,
-      input
-    ])
-  }
-
-
-  // useEffect(() => {
-  //   if (!currSelectedRoom) return;
-  //   const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
-  //   fetch(`${window.location.origin}/api/socket`).finally(() => {
-  //     const socket = io({
-  //       query: {
-  //         room: currSelectedRoom.split(' ').join('%20'),
-  //       },
-  //     })
-
-  //     socket.on('connect', () => {
-  //       socket.emit('hello', 'waterrr')
-  //       // socket.emit(currSelectedRoom)
-  //       socket.emit('join', currSelectedRoom);
-  //       console.log('Connected')
-  //     })
-
-
-  //     socket.on('hello', data => {
-  //       console.log('hello', data)
-  //     })
-
-  //     socket.on('a user connected', () => {
-  //       console.log('a user connected')
-  //     })
-  //     socket.on('connectToRoom', data => {
-  //       alert(data)
-  //     })
-
-  //     socket.on('notif', data => console.log(data))
-
-  //     socket.on(currSelectedRoom, data => {
-  //       console.log("Room:", data)
-  //       const { username, message, room } = JSON.parse(data)
-  //       if (username && message && room && typeof username === 'string' && typeof message === 'string' && typeof room === 'string') {
-  //         addMessage(
-  //           {
-  //             username: username,
-  //             text: message,
-  //             id: Math.random() * 1000,
-  //             roomName: currSelectedRoom,
-  //             createdAt: new Date(Date.now())
-  //           }
-  //         )
-  //       }
-  //     })
-
-  //     socket.on('disconnect', () => {
-  //       console.log('disconnect')
-  //     })
-  //   })
-
-
-  // }, [currSelectedRoom])
 
   useEffect(() => {
-    // Enable pusher logging - don't include this in production
     const addMessage = (msg: any) => setMessages(prevMessages => [...prevMessages, msg]);
-    Pusher.logToConsole = true;
     const PUBLIC_KEY = process.env.NEXT_PUBLIC_PUSHER_APP_KEY
     if (!PUBLIC_KEY) {
       console.log('no public key found')
@@ -145,25 +58,6 @@ const Home: NextPage = () => {
       pusher.unsubscribe('chat')
     }
   }, [])
-
-  // useEffect(() => {
-  //   const pusher = new Pusher(process.env.NEXT_PUBLIC_KEY, {
-  //     cluster: "eu",
-  //   });
-
-  //   const channel = pusher.subscribe("chat");
-
-  //   channel.bind("chat-event", function (data) {
-  //     setChats((prevState) => [
-  //       ...prevState,
-  //       { sender: data.sender, message: data.message },
-  //     ]);
-  //   });
-
-  //   return () => {
-  //     pusher.unsubscribe("chat");
-  //   };
-  // }, []);
 
 
   useEffect(() => {
@@ -191,10 +85,9 @@ const Home: NextPage = () => {
     allMessagesApiCall()
   }, [currSelectedRoom])
 
-  // Ui for Chat
   const bottomRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    // 👇️ scroll to bottom every time messages change
+    // To scroll to bottom every time messages change
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -202,14 +95,14 @@ const Home: NextPage = () => {
     if (e) {
       e.preventDefault();
     }
-    submitSocketMessage()
+    submitPusherMessage()
   }
   const handleSelectRoomChange = (e: any) => {
     if (e.currentKey === currSelectedRoom) return;
     setCurrSelectedRoom(e.currentKey);
   }
 
-  const submitSocketMessage = async (e?: any) => {
+  const submitPusherMessage = async (e?: any) => {
     if (currentUser && currMessage.length > 0) {
       const res = await axios.post(`${window.location.origin}/api/pusher`, {
         username: currentUser.username,
@@ -230,49 +123,6 @@ const Home: NextPage = () => {
       setMessages(currmessages => currmessages.filter(item => item.id !== id))
     }
   }
-
-  // const submitSocketMessage = async (e?: any) => {
-  //   console.log('submit socket messgae')
-  //   if (!(currentUser && currSelectedRoom)) return;
-  //   fetch(`${window.location.origin}/api/socket`).finally(() => {
-  //     const socket = io()
-
-  //     socket.on('connect', () => {
-  //       console.log('we in the submit socket')
-  //       socket.emit('newMessage', JSON.stringify({
-  //         username: currentUser.username,
-  //         message: currMessage,
-  //         room: currSelectedRoom
-  //       }))
-  //       setCurrMessage('')
-  //     })
-
-
-  //     socket.on('newMessage', data => {
-  //       socket.disconnect()
-  //     })
-
-  //     socket.on('disconnect', () => {
-  //       console.log('disconnect')
-  //     })
-  //   })
-  // }
-
-  // const submitSocketMessage = async (e?: any) => {
-
-  //   if (e) {
-  //     e.preventDefault();
-  //   }
-  //   if (!currentUser) return;
-  //   const res = await axios.post(`${window.location.origin}/api/messages?room=${currSelectedRoom.split(' ').join('%20')}`, {
-  //     username: currentUser.username,
-  //     message: currMessage,
-  //     time: new Date(Date.now())
-  //   })
-  //   console.log('res:', res)
-  //   setCurrMessage('');
-
-  // }
 
   return (
     <div className="md:h-screen w-full max-w-none md:overflow-hidden" style={isDark

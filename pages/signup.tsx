@@ -7,12 +7,9 @@ import { useContext, useState } from "react";
 import { UserContext } from "../Auth/UserProvider";
 
 
-// const BG_PIC = 'https://images.unsplash.com/photo-1644219037677-2703bc509933?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3000&q=80'
 const backgroundVideos = ["airpods", "mayonaise", "takis", "nooffense"];
 const VIDEO_SRC = `assets/videos/${backgroundVideos[Math.floor(Math.random() * backgroundVideos.length)]
   }.mp4`;
-
-type Props = {};
 
 type ErrorMessage = {
   title: string;
@@ -20,7 +17,7 @@ type ErrorMessage = {
   type: "error" | "warning";
 };
 
-const signup: NextPage = (props: Props) => {
+const signup: NextPage = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [password2, setPassword2] = useState<string>("");
@@ -50,7 +47,6 @@ const signup: NextPage = (props: Props) => {
 
     const resUser = get(res, "data");
     if (resUser && get(resUser, 'username').length > 0) {
-      // alert(JSON.stringify(resUser));
       setCurrentUser(resUser);
       localStorage.setItem("user", JSON.stringify(resUser));
       router.push("/");

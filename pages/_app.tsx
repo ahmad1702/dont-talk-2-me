@@ -11,7 +11,6 @@ const lightTheme = createTheme({
     colors: {
       primary: '$yellow600',
     }
-    // colors: { ...}, // optional
   }
 })
 
@@ -22,7 +21,6 @@ const darkTheme = createTheme({
     colors: {
       primary: '$yellow600',
     }
-    // colors: { ...}, // optional
   }
 })
 

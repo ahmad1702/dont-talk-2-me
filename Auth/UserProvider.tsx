@@ -1,6 +1,5 @@
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import React, { createContext, ReactNode, useEffect, useState } from "react";
-import { isAuthenticated } from "./AuthService";
 
 export interface UserAuth {
     username: string;
@@ -21,18 +20,6 @@ export const UserProvider = ({ children }: UserProviderProps) => {
     const [currentUser, setCurrentUser] = useState<UserAuth | undefined>(undefined);
 
     useEffect(() => {
-        // const checkLoggedIn = async () => {
-        //     let cuser = isAuthenticated();
-        //     if (cuser === null) {
-        //         localStorage.setItem('user', '');
-        //         cuser = '';
-        //     } else {
-        //         setCurrentUser(cuser);
-        //     }
-
-        // };
-
-        // checkLoggedIn();
 
         if (freeRoutes.includes(window.location.pathname.split('/')[1])) {
             console.log("You are not logged in yet")

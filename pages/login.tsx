@@ -30,7 +30,7 @@ const login: NextPage = (props: Props) => {
     const [password, setPassword] = useState<string>('')
     const [errMsg, setErrMsg] = useState<ErrorMessage | null>(null)
 
-    const { currentUser, setCurrentUser } = useContext(UserContext)
+    const { setCurrentUser } = useContext(UserContext)
 
     const router = useRouter();
 
@@ -67,7 +67,6 @@ const login: NextPage = (props: Props) => {
         <div className='w-full h-full md:h-screen md:flex'>
             <div
                 className='h-96 md:h-screen w-full md:w-1/2 bg-red-800'
-            // style={{ background: `url("${BG_PIC}")`, backgroundSize: 'cover', backgroundPosition: 'center' }}
             >
                 <video
                     autoPlay
